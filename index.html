@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نوور – قورئانی پیرۆز</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<style>
+:root {
+  --bg: #06100f;
+  --bg2: #0e2a27;
+  --card: #0b1f1c;
+  --ink: #eee8d6;
+  --mute: #93a8a2;
+  --gold: #d9b26a;
+  --gold-dim: rgba(217, 178, 106, 0.25);
+  --paper: #f7f3e8;
+  --paper-edge: #e2dac6;
+  --page-ink: #111111;
+  --green-line: #16a34a;
+  --border: #23423d;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: radial-gradient(110% 65% at 50% 0%, var(--bg2), var(--bg) 72%) var(--bg);
+  color: var(--ink);
+  font: 400 18px/1.7 "Noto Naskh Arabic", Amiri, serif;
+}
+
+section {
+  display: none;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 18px 16px 36px;
+}
+
+section.on {
+  display: block;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* بەشی بەخێرهاتن */
+#welcome.on {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 88vh;
+  text-align: center;
+  gap: 16px;
+}
+
+.bism {
+  font: 400 clamp(44px, 12vw, 72px)/1.7 Amiri, serif;
+  color: var(--gold);
+  text-shadow: 0 8px 30px rgba(217, 178, 106, 0.25);
+  animation: glow 2s ease-out both;
+}
+
+@keyframes glow {
+  from { opacity: 0; letter-spacing: 0.18em; filter: blur(6px); }
+  to { opacity: 1; filter: none; }
+}
+
+.welcome-sub {
+  color: var(--mute);
+  max-width: 340px;
+  margin: 0;
+}
+
+input[type=text],
+input[type=search] {
+  width: 100%;
+  max-width: 380px;
+  font: inherit;
+  color: var(--ink);
+  background: #091917;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 18px;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type=search] {
+  max-width: 100%;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+  outline: none;
+}
+
+.go {
+  background: linear-gradient(135deg, #e5c37d, #c69a4b);
+  color: #191306;
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 42px;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(217, 178, 106, 0.25);
+  transition: transform 0.15s;
+}
+
+.go:active {
+  transform: scale(0.97);
+}
+
+/* سەرپەڕە و دوگمە بچووکەکان */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.top h2 {
+  margin: 0;
+  font: 700 23px Amiri, serif;
+  color: var(--gold);
+}
+
+.chip {
+  background: rgba(14, 42, 39, 0.65);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 15px;
+  font-size: 15px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.chip:hover,
+.chip.active {
+  border-color: var(--gold);
+  background: rgba(217, 178, 106, 0.15);
+}
+
+.chip.playing {
+  border-color: var(--green-line);
+  background: rgba(22, 163, 74, 0.2);
+  color: #86efac;
+}
+
+.cont {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: right;
+  margin: 12px 0;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--gold);
+  background: linear-gradient(135deg, #133530, #0c2320);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.cont[hidden] {
+  display: none;
+}
+
+/* کتێبی سێ ڕەهەندی */
+.bk.big {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 22px auto 26px;
+  width: min(70vw, 240px);
+  height: min(94vw, 330px);
+  border-radius: 10px 18px 18px 10px;
+  padding: 58px 20px 20px 38px;
+  background: linear-gradient(145deg, #16443e, #0a221f);
+  border: 1px solid rgba(217, 178, 106, 0.4);
+  box-shadow: 0 24px 40px #000b, inset -2px -2px 8px #0008, inset 2px 2px 6px #fff2;
+  transform: perspective(900px) rotateY(-8deg);
+  transition: transform 0.3s ease;
+}
+
+.bk.big:hover {
+  transform: perspective(900px) rotateY(-2deg) translateY(-3px);
+}
+
+.bk.big::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 26px;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(90deg, #e5c37d, #b48838);
+}
+
+.tg {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 13px;
+  background: rgba(217, 178, 106, 0.18);
+  color: var(--gold);
+  border: 1px solid rgba(217, 178, 106, 0.4);
+  border-radius: 6px;
+  padding: 1px 10px;
+}
+
+.bk.big .bt {
+  font: 700 36px/1.5 Amiri, serif;
+  text-align: center;
+  color: var(--gold);
+}
+
+.bc {
+  font-size: 14px;
+  color: var(--mute);
+  text-align: center;
+}
+
+.ln {
+  display: block;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(217, 178, 106, 0.22);
+  margin-top: 8px;
+}
+
+.bc + .ln {
+  margin-top: auto;
+}
+
+/* لیست و وردەکارییەکان */
+details {
+  margin: 12px 0;
+  background: rgba(11, 31, 28, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 16px;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+summary {
+  font-weight: 600;
+  color: var(--gold);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+summary::after {
+  content: "▾";
+  font-size: 18px;
+}
+
+details[open] summary::after {
+  content: "▴";
+}
+
+details[open] summary {
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #16332f;
+  padding: 11px 6px;
+  text-align: right;
+  border-radius: 8px;
+}
+
+.row:hover {
+  background: #102e2a;
+}
+
+.num {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--gold);
+  color: #1b1608;
+  font: 700 15px Amiri, serif;
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}
+
+.nm {
+  flex: 1;
+  font: 600 17px "Noto Naskh Arabic", serif;
+}
+
+.nm small {
+  display: block;
+  font-size: 13px;
+  color: var(--mute);
+  font-weight: 400;
+}
+
+.ct {
+  color: var(--mute);
+  font-size: 14px;
+}
+
+/* پەڕەی خوێندنەوە بە ستایلی کاغەزی کاڵ و نووسینی ڕەش */
+.reader-tools {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.page {
+  --fz: clamp(23px, 5.8vw, 30px);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--paper-edge), var(--paper) 6%, var(--paper) 94%, var(--paper-edge));
+  touch-action: pan-y;
+  color: var(--page-ink);
+  border-radius: 10px;
+  padding: 24px 20px 28px;
+  border: 3px double #b8903f;
+  box-shadow: 0 0 0 6px #0b1f1c, 0 0 0 7px #b8903f, 0 20px 50px #0009;
+  min-height: 60vh;
+  font: 400 var(--fz)/2.35 Amiri, serif;
+  text-align: justify;
+  transform-origin: left center;
+}
+
+.page.flip {
+  animation: flip 0.45s ease-out;
+}
+
+@keyframes flip {
+  from { transform: perspective(1200px) rotateY(35deg); opacity: 0.3; }
+  to { transform: none; opacity: 1; }
+}
+
+/* هێڵی سەوزی نیشاندەری خوێندنەوە لە ژێر سوورەتەکە */
+.surah-progress-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(22, 163, 74, 0.16);
+  border-radius: 999px;
+  margin: 0 0 14px;
+  overflow: hidden;
+}
+
+.surah-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #15803d, #22c55e, #4ade80);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.55);
+  transition: width 0.25s linear;
+}
+
+.page-green-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: rgba(22, 163, 74, 0.18);
+}
+
+.page-green-marker-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--green-line);
+  transition: width 0.25s linear;
+}
+
+.banner {
+  text-align: center;
+  border: 2px solid #b8903f;
+  border-radius: 12px;
+  padding: 4px 12px;
+  margin: 0 0 12px;
+  background: rgba(255, 253, 247, 0.85);
+  font: 700 26px Amiri, serif;
+  color: #111111;
+}
+
+.bs {
+  text-align: center;
+  color: #1e1e1e;
+  margin: 6px 0 14px;
+  font-size: 0.9em;
+}
+
+.v {
+  border-radius: 6px;
+  color: var(--page-ink);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.v.reading-now {
+  background: rgba(34, 197, 94, 0.16);
+  box-shadow: inset 0 -3px 0 var(--green-line);
+}
+
+.w {
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0 1px;
+  color: var(--page-ink);
+}
+
+.w:hover,
+.w.sel,
+.v.sel {
+  background: rgba(217, 178, 106, 0.45);
+}
+
+.no {
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.55em;
+  height: 1.55em;
+  margin: 0 0.25em;
+  border: 1.5px solid #8a6924;
+  border-radius: 50%;
+  font-size: 0.55em;
+  color: #111111;
+  line-height: 1;
+  vertical-align: middle;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.no.bm-on {
+  background: #16a34a;
+  border-color: #15803d;
+  color: #ffffff;
+}
+
+.inline-tr {
+  display: block;
+  font: 400 16px/1.85 "Noto Naskh Arabic", serif;
+  color: #181818;
+  background: rgba(255, 255, 255, 0.65);
+  border-right: 3px solid #16a34a;
+  padding: 6px 12px;
+  margin: 6px 0 14px;
+  border-radius: 6px;
+  text-align: right;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px 10px;
+  color: #111111;
+  font: 600 18px "Noto Naskh Arabic", serif;
+}
+
+.hint {
+  color: var(--mute);
+  font-size: 14px;
+  text-align: center;
+  margin: 14px 0 0;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  color: var(--mute);
+}
+
+.nav button {
+  background: rgba(14, 42, 39, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 24px;
+  color: var(--ink);
+}
+
+.nav button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* پەنجەرەی خوارەوە (Modal Sheet) */
+#sh {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  background: #0c2320;
+  border-top: 2px solid var(--gold);
+  border-radius: 22px 22px 0 0;
+  padding: 18px 20px calc(18px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  max-height: 68vh;
+  overflow-y: auto;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.75);
+}
+
+#sh.on {
+  transform: none;
+}
+
+#sh .ar {
+  font: 400 25px/2.1 Amiri, serif;
+  text-align: center;
+  color: var(--gold);
+}
+
+#sh .tr {
+  color: var(--ink);
+  text-align: center;
+  margin: 8px 0 12px;
+  font-size: 17px;
+}
+
+.note {
+  color: var(--mute);
+  font-size: 13px;
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+.tj {
+  font: 400 15px/1.9 "Noto Naskh Arabic", serif;
+  color: #cfd8d3;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-bottom: 14px;
+}
+
+.tj:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ١. پەڕەی بەخێرهاتن -->
+<section id="welcome" class="on">
+  <div class="bism">بِسْمِ ٱللَّهِ</div>
+  <p class="welcome-sub">بەخێربێیت بۆ قورئانی پیرۆز. ناوەکەت بنووسە تا دەست پێبکەین.</p>
+  <input type="text" id="nm" placeholder="ناوی تۆ..." autocomplete="given-name" maxlength="30" aria-label="ناوی تۆ">
+  <button class="go" id="start">دەستپێبکە</button>
+</section>
+
+<!-- ٢. پەڕەی سەرەکی (بەبێ بەشی بارکردنی فایلی دەق) -->
+<section id="home">
+  <div class="top">
+    <h2 id="hi"></h2>
+    <button class="chip" id="chg">گۆڕینی ناو</button>
+  </div>
+
+  <button class="cont" id="cont" hidden>
+    <span id="contText"></span>
+    <span>←</span>
+  </button>
+
+  <button class="bk big" id="book" aria-label="قورئان بکەرەوە">
+    <span class="tg">١١٤ سوورەت</span>
+    <span class="bt">القرآن الكريم</span>
+    <span class="bc">٦٢٣٦ ئایەت</span>
+    <i class="ln"></i>
+    <i class="ln"></i>
+    <i class="ln"></i>
+  </button>
+
+  <details open>
+    <summary>فەهرەستی سوورەتەکان (١١٤)</summary>
+    <input type="search" id="q" placeholder="بگەڕێ: ناوی سوورەت یان ژمارە (نموونە: کهف یان 18)" aria-label="گەڕان">
+    <div id="list"></div>
+  </details>
+
+  <details id="bmBox" hidden>
+    <summary>نیشانەکراوەکان (<span id="bmCount">0</span>)</summary>
+    <div id="bmList"></div>
+  </details>
+</section>
+
+<!-- ٣. پەڕەی خوێندنەوە -->
+<section id="reader">
+  <div class="top">
+    <button class="chip" id="back">گەڕانەوە</button>
+    <h2 id="rt"></h2>
+    <button class="chip" id="tv">وەرگێڕان</button>
+  </div>
+
+  <div class="reader-tools">
+    <button class="chip playing" id="reciteBtn">ڕاگرتنی خوێندنەوە ⏸</button>
+    <button class="chip" id="kurdishVoiceBtn">دەنگی کوردی: داخراو</button>
+    <button class="chip" id="fontPlus" title="گەورەکردنی فۆنت">فۆنت +</button>
+    <button class="chip" id="fontMinus" title="بچووککردنەوەی فۆنت">فۆنت -</button>
+  </div>
+
+  <div class="surah-progress-track" aria-hidden="true">
+    <div class="surah-progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="page" id="page"></div>
+
+  <p class="hint">بە دەستپێکردنی سوورەت خوێندنەوە دەست پێدەکات؛ بە دوگمەی ڕاگرتن دەتوانیت ڕایبگریت یان دەست پێبکەیتەوە.</p>
+
+  <div class="nav">
+    <button id="nx">سوورەتی دواتر</button>
+    <span id="pi"></span>
+    <button id="pv">سوورەتی پێشتر</button>
+  </div>
+</section>
+
+<!-- پەنجەرەی خوارەوە بۆ وردەکاری ئایەت -->
+<div id="sh" role="dialog" aria-label="ئایەت">
+  <div class="ar" id="sa"></div>
+  <div class="tr" id="st"></div>
+  <div class="note" id="sn"></div>
+  <div class="tj" id="sj"></div>
+  <div class="top" style="margin-bottom:0">
+    <button class="chip" id="bm">نیشانەکردن</button>
+    <button class="chip" id="cl">داخستن</button>
+  </div>
+</div>
+
+<audio id="quranAudio" preload="none"></audio>
+
+<script>
+const SURAHS = [
+  [1,"الفاتحة","فاتیحە",7],[2,"البقرة","بەقەرە",286],[3,"آل عمران","ئالی عیمران",200],[4,"النساء","نیسا",176],
+  [5,"المائدة","مائیدە",120],[6,"الأنعام","ئەنعام",165],[7,"الأعراف","ئەعراف",206],[8,"الأنفال","ئەنفال",75],
+  [9,"التوبة","تەوبە",129],[10,"يونس","یوونس",109],[11,"هود","هوود",123],[12,"يوسف","یووسف",111],
+  [13,"الرعد","ڕەعد",43],[14,"إبراهيم","ئیبراهیم",52],[15,"الحجر","حیجر",99],[16,"النحل","نەحل",128],
+  [17,"الإسراء","ئیسرا",111],[18,"الكهف","کەهف",110],[19,"مريم","مەریەم",98],[20,"طه","تاها",135],
+  [21,"الأنبياء","ئەنبیا",112],[22,"الحج","حەج",78],[23,"المؤمنون","موئمینوون",118],[24,"النور","نوور",64],
+  [25,"الفرقان","فورقان",77],[26,"الشعراء","شوعەرا",227],[27,"النمل","نەمل",93],[28,"القصص","قەسەس",88],
+  [29,"العنكبوت","عەنکەبووت",69],[30,"الروم","ڕووم",60],[31,"لقمان","لوقمان",34],[32,"السجدة","سەجدە",30],
+  [33,"الأحزاب","ئەحزاب",73],[34,"سبأ","سەبەئـ",54],[35,"فاطر","فاتر",45],[36,"يس","یاسین",83],
+  [37,"الصافات","ساففات",182],[38,"ص","ساد",88],[39,"الزمر","زومەر",75],[40,"غافر","غافر",85],
+  [41,"فصلت","فوسسیلەت",54],[42,"الشورى","شوورا",53],[43,"الزخرف","زوخروف",89],[44,"الدخان","دوخان",59],
+  [45,"الجاثية","جاسییە",37],[46,"الأحقاف","ئەحقاف",35],[47,"محمد","موحەممەد",38],[48,"الفتح","فەتح",29],
+  [49,"الحجرات","حوجورات",18],[50,"ق","قاف",45],[51,"الذاريات","زاریات",60],[52,"الطور","توور",49],
+  [53,"النجم","نەجم",62],[54,"القمر","قەمەر",55],[55,"الرحمن","ڕەحمان",78],[56,"الواقعة","واقیعە",96],
+  [57,"الحديد","حەدید",29],[58,"المجادلة","موجادەلە",22],[59,"الحشر","حەشر",24],[60,"الممتحنة","مومتەحینە",13],
+  [61,"الصف","سەف",14],[62,"الجمعة","جوموعە",11],[63,"المنافقون","مونافیقوون",11],[64,"التغابن","تەغابون",18],
+  [65,"الطلاق","تەڵاق",12],[66,"التحريم","تەحریم",12],[67,"الملك","مولک",30],[68,"القلم","قەلەم",52],
+  [69,"الحاقة","حاققە",52],[70,"المعارج","مەعاریج",44],[71,"نوح","نووح",28],[72,"الجن","جن",28],
+  [73,"المزمل","موززەمیل",20],[74,"المدثر","موددەسیر",56],[75,"القيامة","قیامە",40],[76,"الإنسان","ئینسان",31],
+  [77,"المرسلات","مورسەلات",50],[78,"النبأ","نەبەئـ",40],[79,"النازعات","نازیعات",46],[80,"عبس","عەبەسە",42],
+  [81,"التكوير","تەکویر",29],[82,"الانفطار","ئینفیتار",19],[83,"المطففين","موتەففیفین",36],[84,"الانشقاق","ئینشیقاق",25],
+  [85,"البروج","بورووج",22],[86,"الطارق","تاریق",17],[87,"الأعلى","ئەعلا",19],[88,"الغاشية","غاشییە",26],
+  [89,"الفجر","فەجر",30],[90,"البلد","بەلەد",20],[91,"الشمس","شەمس",15],[92,"الليل","لەیل",21],
+  [93,"الضحى","زوحا",11],[94,"الشرح","شەرح",8],[95,"التين","تین",8],[96,"العلق","عەلەق",19],
+  [97,"القدر","قەدر",5],[98,"البينة","بەییینە",8],[99,"الزلزلة","زەلزەلە",8],[100,"العاديات","عادیات",11],
+  [101,"القارعة","قاریعە",11],[102,"التكاثر","تەکاسور",8],[103,"العصر","عەسر",3],[104,"الهمزة","هومەزە",9],
+  [105,"الفيل","فیل",5],[106,"قريش","قورەیش",4],[107,"الماعون","ماعوون",7],[108,"الكوثر","کەوسەر",3],
+  [109,"الكافرون","کافیروون",6],[110,"النصر","نەسر",3],[111,"المسد","مەسەد",5],[112,"الإخلاص","ئیخلاس",4],
+  [113,"الفلق","فەلەق",5],[114,"الناس","ناس",6]
+];
+
+const $ = id => document.getElementById(id);
+const toArNum = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const audioEl = $("quranAudio");
+
+let state = {
+  name: localStorage.getItem("nur_name") || "",
+  surah: Number(localStorage.getItem("nur_last_surah")) || 1,
+  showTr: localStorage.getItem("nur_show_tr") === "1",
+  kurdishVoice: localStorage.getItem("nur_ku_voice") === "1",
+  fontSize: Number(localStorage.getItem("nur_fz")) || 26,
+  bookmarks: JSON.parse(localStorage.getItem("nur_bookmarks") || "[]"),
+  cache: {},
+  activeAyah: null,
+  isReciting: false,
+  currentAyahIdx: 0,
+  progressTimer: null,
+  lineProgress: 0
+};
+
+function showSection(id) {
+  document.querySelectorAll("section").forEach(s => s.classList.remove("on"));
+  $(id).classList.add("on");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (id !== "reader") {
+    stopRecitation(true);
+  }
+}
+
+function init() {
+  if (state.name) {
+    renderHome();
+    showSection("home");
+  }
+  renderSurahList("");
+  renderBookmarks();
+  updateKurdishVoiceBtn();
+}
+
+// چوونەژوورەوە و گۆڕینی ناو
+$("start").onclick = () => {
+  const val = $("nm").value.trim();
+  if (!val) {
+    $("nm").focus();
+    return;
+  }
+  state.name = val;
+  localStorage.setItem("nur_name", val);
+  renderHome();
+  showSection("home");
+};
+
+$("nm").addEventListener("keydown", e => {
+  if (e.key === "Enter") $("start").click();
+});
+
+$("chg").onclick = () => {
+  $("nm").value = state.name;
+  showSection("welcome");
+  setTimeout(() => $("nm").focus(), 100);
+};
+
+function renderHome() {
+  $("hi").textContent = `بەخێربێیت، ${state.name}`;
+  const last = SURAHS.find(s => s[0] === state.surah);
+  if (last && localStorage.getItem("nur_last_surah")) {
+    $("cont").hidden = false;
+    $("contText").textContent = `درێژەدان بە خوێندنەوە: سوورەتی ${last[1]} (${last[2]})`;
+    $("cont").onclick = () => openSurah(last[0], true);
+  }
+}
+
+$("book").onclick = () => openSurah(state.surah || 1, true);
+
+// فەهرەستی سوورەتەکان و گەڕان
+function renderSurahList(query) {
+  const q = query.trim().toLowerCase();
+  const filtered = SURAHS.filter(([num, ar, ku]) =>
+    !q || String(num) === q || ar.includes(q) || ku.includes(q)
+  );
+  $("list").innerHTML = filtered.map(([num, ar, ku, count]) => `
+    <button class="row" onclick="openSurah(${num}, true)">
+      <span class="num">${toArNum(num)}</span>
+      <span class="nm">${ar}<small>${ku}</small></span>
+      <span class="ct">${toArNum(count)} ئایەت</span>
+    </button>
+  `).join("");
+}
+
+$("q").addEventListener("input", e => renderSurahList(e.target.value));
+
+// کردنەوەی سوورەت و دەستپێکردنی خوێندنەوەی خۆکار
+async function openSurah(num, autoStart = true) {
+  stopRecitation(true);
+  state.surah = num;
+  state.currentAyahIdx = 0;
+  state.lineProgress = 0;
+  localStorage.setItem("nur_last_surah", num);
+  renderHome();
+  closeSheet();
+  showSection("reader");
+
+  const info = SURAHS[num - 1];
+  $("rt").textContent = `${info[1]} (${info[2]})`;
+  $("pi").textContent = `${toArNum(num)} / ١١٤`;
+  $("pv").disabled = num <= 1;
+  $("nx").disabled = num >= 114;
+
+  const page = $("page");
+  page.style.setProperty("--fz", state.fontSize + "px");
+  page.classList.remove("flip");
+  void page.offsetWidth;
+  page.classList.add("flip");
+  page.innerHTML = `<div class="loading">چاوەڕوان بە، سوورەتی ${info[1]} باردەبێت...</div>`;
+
+  const data = await getSurahData(num);
+  renderPage(num, info, data);
+
+  if (!data.error && autoStart) {
+    startRecitationFrom(0);
+  }
+}
+
+async function getSurahData(num) {
+  if (state.cache[num]) return state.cache[num];
+
+  try {
+    const [arRes, trRes] = await Promise.all([
+      fetch(`https://api.alquran.cloud/v1/surah/${num}/quran-uthmani`),
+      fetch(`https://api.alquran.cloud/v1/surah/${num}/ku.asan`)
+    ]);
+    const arJson = await arRes.json();
+    const trJson = await trRes.json();
+
+    const arAyahs = arJson.data.ayahs.map((a, i) => {
+      let txt = a.text;
+      if (num !== 1 && num !== 9 && i === 0) {
+        txt = txt.replace(/^بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ\s*/, "");
+      }
+      return txt;
+    });
+    const trAyahs = trJson.data.ayahs.map(a => a.text);
+
+    const result = { ar: arAyahs, tr: trAyahs };
+    state.cache[num] = result;
+    return result;
+  } catch (err) {
+    return { error: true };
+  }
+}
+
+function renderPage(num, info, data) {
+  const page = $("page");
+  if (data.error) {
+    page.innerHTML = `<div class="loading">پەیوەندی ئینتەرنێت نییە. تکایە ئینتەرنێت بکەرەوە بۆ خوێندنەوەی سوورەتەکە.</div>`;
+    return;
+  }
+
+  $("tv").classList.toggle("active", state.showTr);
+  let html = `<div class="banner">سُورَةُ ${info[1]}</div>`;
+  if (num !== 1 && num !== 9) {
+    html += `<div class="bs">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`;
+  }
+
+  data.ar.forEach((ayah, idx) => {
+    const ayahNum = idx + 1;
+    const key = `${num}:${ayahNum}`;
+    const isBm = state.bookmarks.some(b => b.key === key);
+    const trText = data.tr[idx] || "وەرگێڕان بەردەست نییە";
+
+    const wordsHtml = ayah.split(/\s+/).map(w =>
+      `<span class="w" onclick="openAyah(${num}, ${ayahNum})">${w}</span>`
+    ).join(" ");
+
+    html += `<span class="v" id="v-${ayahNum}">${wordsHtml}<span class="no ${isBm ? "bm-on" : ""}" onclick="openAyah(${num}, ${ayahNum})">${toArNum(ayahNum)}</span></span>`;
+
+    if (state.showTr) {
+      html += `<span class="inline-tr">${trText}</span>`;
+    }
+  });
+
+  html += `<div class="page-green-marker" aria-hidden="true"><div class="page-green-marker-fill" id="pageLineBar" style="width:${state.lineProgress}%"></div></div>`;
+  page.innerHTML = html;
+  highlightCurrentAyah();
+}
+
+// بەڕێوەبردنی خوێندنەوە و خەتە سەوزەکە
+function startSlowLineTicker(totalAyahs) {
+  clearInterval(state.progressTimer);
+  state.lineProgress = 0;
+  updateProgressVisuals(totalAyahs);
+
+  state.progressTimer = setInterval(() => {
+    if (!state.isReciting) return;
+    if (state.lineProgress < 98) {
+      state.lineProgress += 0.65;
+      updateProgressVisuals(totalAyahs);
+    }
+  }, 180);
+}
+
+function updateProgressVisuals(totalAyahs) {
+  const ayahRatio = totalAyahs > 0 ? ((state.currentAyahIdx + (state.lineProgress / 100)) / totalAyahs) * 100 : 0;
+  const clamped = Math.min(100, Math.max(0, ayahRatio));
+  if ($("progressBar")) $("progressBar").style.width = clamped + "%";
+  if ($("pageLineBar")) $("pageLineBar").style.width = Math.min(100, state.lineProgress) + "%";
+}
+
+function highlightCurrentAyah() {
+  document.querySelectorAll(".v.reading-now").forEach(el => el.classList.remove("reading-now"));
+  if (!state.isReciting) return;
+  const el = $(`v-${state.currentAyahIdx + 1}`);
+  if (el) {
+    el.classList.add("reading-now");
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+function setReciteBtnState(playing) {
+  const btn = $("reciteBtn");
+  btn.classList.toggle("playing", playing);
+  btn.textContent = playing ? "ڕاگرتنی خوێندنەوە ⏸" : "دەستپێکردنی خوێندنەوە ▶";
+}
+
+function stopRecitation(silent = false) {
+  state.isReciting = false;
+  clearInterval(state.progressTimer);
+  audioEl.pause();
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+  highlightCurrentAyah();
+  if (!silent) {
+    setReciteBtnState(false);
+  }
+}
+
+async function startRecitationFrom(idx) {
+  const data = state.cache[state.surah];
+  if (!data || data.error || !data.ar.length) return;
+
+  if (idx >= data.ar.length) {
+    state.lineProgress = 100;
+    if ($("progressBar")) $("progressBar").style.width = "100%";
+    if ($("pageLineBar")) $("pageLineBar").style.width = "100%";
+    stopRecitation(false);
+    return;
+  }
+
+  state.isReciting = true;
+  state.currentAyahIdx = idx;
+  setReciteBtnState(true);
+  highlightCurrentAyah();
+  startSlowLineTicker(data.ar.length);
+
+  // لێدانی دەنگی ئایەت بە قورئانخوێن (Alafasy)
+  const globalAyahNum = getGlobalAyahNumber(state.surah, idx + 1);
+  audioEl.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${globalAyahNum}.mp3`;
+
+  try {
+    await audioEl.play();
+  } catch (e) {
+    // ئەگەر دەنگی ئۆدیۆ لەلایەن وێبگەڕەوە ڕابگیرێت، خەتە سەوزەکە هەر بە هێواشی دەڕوات
+  }
+}
+
+audioEl.onended = () => {
+  if (!state.isReciting) return;
+  const data = state.cache[state.surah];
+  const trText = data && data.tr ? data.tr[state.currentAyahIdx] : "";
+
+  // ئەگەر بەکارهێنەر دەنگی کوردی چالاک کردبێت، وەرگێڕانەکە بە کوردی دەخوێنێتەوە
+  if (state.kurdishVoice && trText && "speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(trText);
+    utter.lang = "ckb-IQ";
+    utter.rate = 0.95;
+    utter.onend = () => {
+      if (state.isReciting) startRecitationFrom(state.currentAyahIdx + 1);
+    };
+    utter.onerror = () => {
+      if (state.isReciting) startRecitationFrom(state.currentAyahIdx + 1);
+    };
+    window.speechSynthesis.speak(utter);
+  } else {
+    startRecitationFrom(state.currentAyahIdx + 1);
+  }
+};
+
+function getGlobalAyahNumber(surahNum, ayahNum) {
+  let total = 0;
+  for (let i = 0; i < surahNum - 1; i++) {
+    total += SURAHS[i][3];
+  }
+  return total + ayahNum;
+}
+
+$("reciteBtn").onclick = () => {
+  if (state.isReciting) {
+    stopRecitation(false);
+  } else {
+    startRecitationFrom(state.currentAyahIdx);
+  }
+};
+
+function updateKurdishVoiceBtn() {
+  const btn = $("kurdishVoiceBtn");
+  btn.textContent = state.kurdishVoice ? "دەنگی کوردی: چالاک 🔊" : "دەنگی کوردی: داخراو";
+  btn.classList.toggle("active", state.kurdishVoice);
+}
+
+$("kurdishVoiceBtn").onclick = () => {
+  state.kurdishVoice = !state.kurdishVoice;
+  localStorage.setItem("nur_ku_voice", state.kurdishVoice ? "1" : "0");
+  if (!state.kurdishVoice && "speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+  updateKurdishVoiceBtn();
+};
+
+// پەنجەرەی خوارەوە بۆ ئایەت و نیشانەکردن
+function openAyah(surahNum, ayahNum) {
+  const data = state.cache[surahNum];
+  if (!data) return;
+
+  document.querySelectorAll(".v.sel").forEach(el => el.classList.remove("sel"));
+  const vEl = $(`v-${ayahNum}`);
+  if (vEl) vEl.classList.add("sel");
+
+  const info = SURAHS[surahNum - 1];
+  const key = `${surahNum}:${ayahNum}`;
+  state.activeAyah = { key, surahNum, ayahNum, surahName: info[1] };
+
+  $("sa").textContent = data.ar[ayahNum - 1];
+  $("st").textContent = data.tr[ayahNum - 1] || "";
+  $("sn").textContent = `سوورەتی ${info[1]} (${info[2]}) - ئایەتی ${toArNum(ayahNum)}`;
+  $("sj").textContent = "";
+
+  updateBmBtn();
+  $("sh").classList.add("on");
+}
+
+function closeSheet() {
+  $("sh").classList.remove("on");
+  document.querySelectorAll(".v.sel").forEach(el => el.classList.remove("sel"));
+}
+
+$("cl").onclick = closeSheet;
+
+function updateBmBtn() {
+  if (!state.activeAyah) return;
+  const exists = state.bookmarks.some(b => b.key === state.activeAyah.key);
+  $("bm").textContent = exists ? "لابردنی نیشانە ✓" : "نیشانەکردن";
+  $("bm").classList.toggle("active", exists);
+}
+
+$("bm").onclick = () => {
+  if (!state.activeAyah) return;
+  const idx = state.bookmarks.findIndex(b => b.key === state.activeAyah.key);
+  if (idx > -1) {
+    state.bookmarks.splice(idx, 1);
+  } else {
+    state.bookmarks.unshift(state.activeAyah);
+  }
+  localStorage.setItem("nur_bookmarks", JSON.stringify(state.bookmarks));
+  updateBmBtn();
+  renderBookmarks();
+  if (state.cache[state.surah]) {
+    renderPage(state.surah, SURAHS[state.surah - 1], state.cache[state.surah]);
+  }
+};
+
+function renderBookmarks() {
+  const box = $("bmBox");
+  if (!state.bookmarks.length) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  $("bmCount").textContent = toArNum(state.bookmarks.length);
+  $("bmList").innerHTML = state.bookmarks.map(b => `
+    <button class="row" onclick="jumpToBookmark(${b.surahNum}, ${b.ayahNum})">
+      <span class="num">${toArNum(b.surahNum)}</span>
+      <span class="nm">سوورەتی ${b.surahName}<small>ئایەتی ${toArNum(b.ayahNum)}</small></span>
+      <span class="ct">کردنەوە ←</span>
+    </button>
+  `).join("");
+}
+
+async function jumpToBookmark(surahNum, ayahNum) {
+  await openSurah(surahNum, false);
+  setTimeout(() => {
+    const el = $(`v-${ayahNum}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      openAyah(surahNum, ayahNum);
+    }
+  }, 300);
+}
+
+// دوگمەکانی گەڕانەوە، پێشتر، دواتر، وەرگێڕان، فۆنت
+$("back").onclick = () => {
+  closeSheet();
+  showSection("home");
+};
+
+$("pv").onclick = () => {
+  if (state.surah > 1) openSurah(state.surah - 1, true);
+};
+
+$("nx").onclick = () => {
+  if (state.surah < 114) openSurah(state.surah + 1, true);
+};
+
+$("tv").onclick = () => {
+  state.showTr = !state.showTr;
+  localStorage.setItem("nur_show_tr", state.showTr ? "1" : "0");
+  if (state.cache[state.surah]) {
+    renderPage(state.surah, SURAHS[state.surah - 1], state.cache[state.surah]);
+  }
+};
+
+$("fontPlus").onclick = () => {
+  if (state.fontSize < 40) {
+    state.fontSize += 2;
+    localStorage.setItem("nur_fz", state.fontSize);
+    $("page").style.setProperty("--fz", state.fontSize + "px");
+  }
+};
+
+$("fontMinus").onclick = () => {
+  if (state.fontSize > 18) {
+    state.fontSize -= 2;
+    localStorage.setItem("nur_fz", state.fontSize);
+    $("page").style.setProperty("--fz", state.fontSize + "px");
+  }
+};
+
+// هەڵدانەوەی لاپەڕە بە پەنجە (Swipe)
+let touchStartX = 0;
+$("page").addEventListener("touchstart", e => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+$("page").addEventListener("touchend", e => {
+  const diff = e.changedTouches[0].screenX - touchStartX;
+  if (Math.abs(diff) > 65) {
+    if (diff > 0 && state.surah < 114) openSurah(state.surah + 1, true);
+    else if (diff < 0 && state.surah > 1) openSurah(state.surah - 1, true);
+  }
+}, { passive: true });
+
+init();
+</script>
+</body>
+</html>
